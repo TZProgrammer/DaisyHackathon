@@ -1,3 +1,4 @@
+import os
 import wave
 
 import pyaudio
@@ -31,10 +32,31 @@ def save_audio(path, p, frames):
     wf.writeframes(b''.join(frames))
     wf.close()
 
-def main():
-    p, frames = record_audio(5)
-    file_name = "record_stream"
-    save_audio(f"../data/recorded_data/{file_name}.mp3", p, frames)
+def append_audio(path, p, frames):
+    with wave.open(path, 'rb') as rf:
+        old_frames = rf.readframes(rf.getnframes())
+
+    data = old_frames + b''.join(frames)
+    with wave.open(path, 'wb') as wf:
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(p.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(data)
+        wf.close()
+
+def main(replace):
+    tot_num_seconds = 30
+    recording_interval = 3 
+    num_iterations = tot_num_seconds/recording_interval
+    for _ in range(round(num_iterations)):
+        p, frames = record_audio(recording_interval)
+        file_name = "record_stream"
+        path = f"../data/recorded_data/{file_name}.mp3"
+        if os.path.exists(path) and replace == False:
+            append_audio(path, p, frames)
+        else:
+            replace = False
+            save_audio(path, p, frames)
 
 if __name__ == "__main__":
-    main()
+    main(True)

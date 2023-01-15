@@ -14,7 +14,8 @@ def main():
 
     prev_mod_time = -1
     start = time.time()
-    while time.time() - start < 35:
+    max_time = 100
+    while time.time() - start < max_time:
         time.sleep(0.2)
         if(os.stat(data_stream_path).st_mtime != prev_mod_time):
             prev_mod_time = os.stat(data_stream_path).st_mtime  

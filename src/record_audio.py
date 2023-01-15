@@ -45,8 +45,8 @@ def append_audio(path, p, frames):
         wf.close()
 
 def main(replace):
-    tot_num_seconds = 30
-    recording_interval = 3 
+    tot_num_seconds = 33
+    recording_interval = 5
     num_iterations = tot_num_seconds/recording_interval
     for _ in range(round(num_iterations)):
         p, frames = record_audio(recording_interval)

@@ -40,22 +40,33 @@ def main(trained = "finetunned", test_cases = True):
         return 0
 
     stream_path = "../results/stream/transcription.txt"
+    if os.path.exists(stream_path) and os.path.isfile(stream_path):
+        os.remove(stream_path)
+
     max_time = 100
     start = time.time()
     previous_dialogue = ""
+    previous_input = ""
     prev_mod_time = -1
     while time.time() - start < max_time:
         time.sleep(0.05)
         
-        if(os.stat(stream_path).st_mtime == prev_mod_time):
+        if(not os.path.exists(stream_path)):
             continue
 
+
+        if(os.stat(stream_path).st_mtime == prev_mod_time):
+            continue
+        prev_mod_time = os.stat(stream_path).st_mtime
+            
         with open(stream_path, 'r') as transcription_file:
             dialogue = transcription_file.read().strip()
 
-        if((len(dialogue) - len(previous_dialogue) < 20) or (dialogue == previous_dialogue) or not (dialogue[-1] == '.' and dialogue[-2] != '.')):
+        if((len(dialogue) - len(previous_dialogue) < 20) or (dialogue == previous_dialogue) or (dialogue != previous_input) or not (dialogue[-1] in ['.', '?', '!'] and dialogue[-2] != '.')):
+            previous_input = dialogue
             continue
 
+        previous_input = dialogue
         str_diff = get_str_diff(dialogue, previous_dialogue)
         print(f"{happy_tc.classify_text(str_diff)}: {str_diff}")
         previous_dialogue = dialogue

@@ -2,3 +2,5 @@ amazon_total/*
 amazon_total.txt
 data/recorded_data/*
 results/*
+test.csv
+train.csv

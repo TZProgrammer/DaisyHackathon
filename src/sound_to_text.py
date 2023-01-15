@@ -1,10 +1,21 @@
 import whisper
 
-model = whisper.load_model("base")
 
-in_mp3 = "test_one_min"
-result = model.transcribe(f"../data/test_mp3/{in_mp3}.mp3")
+def transcribe(path, model):
+    transcription = model.transcribe(path)
+    return transcription
 
-# Save transcription
-with open(f"../result/test/result_{in_mp3}.txt", "w") as out_transcription:
-    out_transcription.write(result["text"])
+def main():
+    model = whisper.load_model("base")
+    data_stream_path = "../data/recorded_data/record_stream.mp3"
+
+    transcription = transcribe(data_stream_path, model)
+    print(transcription["text"])
+
+    # Save transcription
+    with open(f"../results/stream/transcription.txt", "w") as out_transcription:
+        out_transcription.write(transcription["text"])
+
+
+if __name__ == "__main__":
+    main()
